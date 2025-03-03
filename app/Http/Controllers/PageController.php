@@ -35,9 +35,9 @@ class PageController extends Controller
     public function showBlog($id)
     {
         $posts = [
-            1 => ['title' => 'Prvý článok', 'content' => 'Toto je celý text prvého článku.'],
-            2 => ['title' => 'Druhý článok', 'content' => 'Toto je celý text druhého článku.'],
-            3 => ['title' => 'Tretí článok', 'content' => 'Toto je celý text tretieho článku.'],
+            1 => ['title' => 'Prvý článok', 'excerpt' => 'Toto je celý text prvého článku.'],
+            2 => ['title' => 'Druhý článok', 'excerpt' => 'Toto je celý text druhého článku.'],
+            3 => ['title' => 'Tretí článok', 'excerpt' => 'Toto je celý text tretieho článku.'],
         ];
 
         if (!array_key_exists($id, $posts)) {

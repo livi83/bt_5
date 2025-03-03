@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>{{ $post['title'] }}</h1>
-    <p>{{ $post['content'] }}</p>
+    <p>{{ $post['excerpt'] }}</p>
     <a href="{{ url('/blog') }}">Späť na blog</a>
 </body>
 </html>
