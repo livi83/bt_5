@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Post;
+use Illuminate\Support\Facades\DB;
 
 class PostSeeder extends Seeder
 {
@@ -13,7 +13,9 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        // Vytvorenie 10 testovacích príspevkov
-        Post::factory()->count(10)->create();
+        DB::table('posts')->insert([
+            ['title' => 'Prvý článok', 'content' => 'Obsah prvého článku', 'user_id' => 1, 'category_id' => 1],
+            ['title' => 'Druhý článok', 'content' => 'Obsah druhého článku', 'user_id' => 2, 'category_id' => 2]
+        ]);
     }
 }
