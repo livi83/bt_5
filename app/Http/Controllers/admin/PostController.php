@@ -75,6 +75,14 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
+       
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -89,8 +97,7 @@ class PostController extends Controller
             ]);
 
         if (!$affected) {
-            return response()->json(['message' => 'Post sa nenašiel alebo nebol aktualizovaný'], 
-            Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Post sa nenašiel alebo nebol aktualizovaný'], Response::HTTP_NOT_FOUND);
         }
 
         $updatedPost = DB::table('posts')->where('id', $id)->first();
@@ -99,18 +106,62 @@ class PostController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $post = DB::table('posts')->where('id', $id)->first();
+
+        if (!$post) {
+            return response()->json(['message' => 'Post sa nenašiel'], Response::HTTP_NOT_FOUND);
+        }
+
+        DB::table('posts')->where('id', $id)->delete();
+
+        return response()->json(['message' => 'Post bol vymazaný'], Response::HTTP_OK);
+    }
+
+    public function postsWithUsers()
+    {
+        $posts = DB::table('posts')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->select('posts.*', 'users.name as user_name')
+            ->get();
+
+        return response()->json($posts);
+    }
+
+    public function usersWithPostsCount()
+    {
+        $users = DB::table('users')
+            ->select('users.id', 'users.name')
+            ->selectSub(function ($query) {
+                $query->from('posts')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('posts.user_id', 'users.id');
+            }, 'post_count')
+            ->get();
+
+        return response()->json($users);
+    }
+
+    public function searchPosts(Request $request)
+    {
+        $query = $request->query('q');
+
+        if (empty($query)) {
+            return response()->json(['message' => 'Musíte zadať dopyt na vyhľadávanie'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $posts = DB::table('posts')
+            ->where('title', 'like', '%' . $query . '%')
+            ->orWhere('content', 'like', '%' . $query . '%')
+            ->get();
+
+        if ($posts->isEmpty()) {
+            return response()->json(['message' => 'Žiadne poznámky sa nenašli'], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json($posts);
     }
 }
