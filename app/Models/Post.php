@@ -1,12 +1,28 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory;  // Pridaj tento import
-use Illuminate\Database\Eloquent\Model;
+//umoznuje praovat s tabulkami ako s objektami
+use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
-    use HasFactory;
+    //ktore stlpce tabulky budu vyplnene
+    protected $fillable = ['title', 'content', 'category_id', 'user_id'];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    protected $fillable = ['title', 'content'];
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+        
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class,'tag_post');
+    }
 }
